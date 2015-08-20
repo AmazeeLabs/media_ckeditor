@@ -6,38 +6,15 @@
  */
 
 /**
- * Implements hook_element_info_alter().
+ * Implements hook_js_alter().
+ *
+ * @todo: remove this when https://www.drupal.org/node/2542566 is fixed.
  */
-function media_ckeditor_element_info_alter(&$types) {
-  $types['text_format']['#pre_render'][] = 'media_ckeditor_pre_render_text_format';
-}
+function media_ckeditor_js_alter(&$javascript) {
+  $path = drupal_get_path('module', 'ckeditor') . '/plugins/media/library.js';
 
-/**
- * Adds CKEditor-specific JavaScript.
- */
-function media_ckeditor_pre_render_text_format($element) {
-  // filter_process_format() copies properties to the expanded 'value' child
-  // element.
-  if (!isset($element['format'])) {
-    return $element;
+  // Remove the default CKEditor Media plugin library JS.
+  if (isset($javascript[$path])) {
+    unset($javascript[$path]);
   }
-
-  $field = &$element['value'];
-  $settings = array(
-    'field' => $field['#id'],
-  );
-
-  if (!isset($field['#value'])) {
-    return $element;
-  }
-
-  // Add CKEditor-specific JS.
-  $element['#attached']['js'][] = array(
-    'data' => drupal_get_path('module', 'media_ckeditor') . '/js/plugins/media/library.js',
-    'type' => 'file',
-    'scope' => 'footer',
-    'weight' => -20,
-  );
-
-  return $element;
 }

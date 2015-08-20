@@ -4,6 +4,4 @@ package = Media
 core = 7.x
 
 dependencies[] = ckeditor
-dependencies[] = media_wysiwyg
-
-test_dependencies[] = token
+dependencies[] = media (<2.x)
