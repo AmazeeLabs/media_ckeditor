@@ -53,7 +53,19 @@
       var imgElement = $(this.stripDivs(formattedMedia));
       this.addImageAttributes(imgElement, mediaFile.fid, viewMode, options);
 
-      var toInsert = this.outerHTML(imgElement);
+      // SOWEB-480: Add filename and link to file
+      // imgElement will be a list with to elements, outerHTML will take only the
+      // first one in this case and we need all, that's why we use the loop
+      if (imgElement.length > 1) {
+        var toInsert = '';
+        for(i=0; i<imgElement.length; i++) {
+          toInsert = toInsert + this.outerHTML(imgElement.eq(i));
+        }
+      }
+      else {
+        var toInsert = this.outerHTML(imgElement);
+      }
+
       // Create an inline tag
       var inlineTag = Drupal.settings.ckeditor.plugins['media'].createTag(imgElement);
       // Add it to the tag map in case the user switches input formats
@@ -95,7 +107,9 @@
       if ($(formattedMedia).is('img')) {
         stripped = this.outerHTML($(formattedMedia));
       } else {
-        stripped = this.outerHTML($('img', $(formattedMedia)));
+        // SOWEB-480: Add filename and link to file
+        stripped = this.outerHTML($('img', $(formattedMedia)))
+                 + this.outerHTML($('a', $(formattedMedia)));
       }
       // This will fail if we pass the img tag without anything wrapping it, like we do when re-enabling ckeditor
       return stripped;
